@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TARA COSMOS — Hand-Controlled 3D Universe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=crisp3" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- Fullscreen 3D Cosmic Viewport -->
+  <div id="scene-container" aria-label="3D Interactive Universe"></div>
+
+  <!-- Ambient Vignette & Cosmic HUD Frame -->
+  <div class="cosmic-vignette"></div>
+
+  <!-- Top Bar: Cosmic Brand + Quick Realm Switcher + Live Telemetry Pill -->
+  <header class="hud-top">
+    <div class="glass-panel brand-card">
+      <div class="brand-orb">
+        <span class="orb-core"></span>
+        <span class="orb-ring"></span>
+      </div>
+      <div>
+        <div class="brand-title-row">
+          <h1 class="brand-title">TARA COSMOS</h1>
+          <span class="brand-tag">UNIVERSE ENGINE</span>
+        </div>
+        <p class="brand-subtitle">Every Star Within Reach • Real-Time Hand Telekinesis</p>
+      </div>
+    </div>
+
+    <!-- Center Realm Quick-Pills -->
+    <nav class="glass-panel realm-switcher" aria-label="Cosmic Realms">
+      <button class="realm-pill active" data-realm="solar" type="button">
+        <span class="pill-dot solar-dot"></span>Solar System
+      </button>
+      <button class="realm-pill" data-realm="galaxy" type="button">
+        <span class="pill-dot galaxy-dot"></span>Spiral Galaxy
+      </button>
+      <button class="realm-pill" data-realm="supernova" type="button">
+        <span class="pill-dot nova-dot"></span>Pulsar &amp; Tara Web
+      </button>
+      <button class="realm-pill" data-realm="dyson" type="button">
+        <span class="pill-dot dyson-dot"></span>Celestial Dyson
+      </button>
+    </nav>
+
+    <div class="glass-panel status-bar">
+      <div class="status-indicator">
+        <span id="status-dot" class="status-dot loading"></span>
+        <span id="status-text">Awakening Cosmos…</span>
+      </div>
+      <div class="status-divider"></div>
+      <div class="gesture-badge" id="gesture-badge">Awaiting Hand</div>
+      <div class="status-divider"></div>
+      <div class="fps-readout"><span id="fps-value">--</span> FPS</div>
+    </div>
+  </header>
+
+  <!-- Left HUD: Cosmic Telekinesis Controls & Telemetry -->
+  <aside class="hud-left" id="hud-left">
+    <section class="glass-panel instructions-card">
+      <div class="card-header-row">
+        <h2 class="panel-heading">Cosmic Hand Powers</h2>
+        <span class="star-count-badge" id="star-count-badge">4,500 TARAS</span>
+      </div>
+
+      <div class="instruction-list">
+        <div class="instruction-item" id="inst-pinch">
+          <div class="inst-icon pinch-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+            </svg>
+          </div>
+          <div class="inst-body">
+            <h3>Pinch — Gravity Lock &amp; Move</h3>
+            <p>Touch <strong>Thumb + Index</strong> to lock onto the Celestial Core, pull nearby <em>Taras</em> (stars) into orbit, and glide the universe smoothly across space.</p>
+          </div>
+        </div>
+
+        <div class="instruction-item" id="inst-rotate">
+          <div class="inst-icon rotate-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(25 12 12)" />
+              <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-25 12 12)" />
+              <circle cx="12" cy="12" r="2.2" />
+            </svg>
+          </div>
+          <div class="inst-body">
+            <h3>Wrist Twist — Rotate the Cosmos</h3>
+            <p>Roll, tilt, or turn your wrist to rotate the entire star system, orbital rings, and surrounding galaxy in 3D.</p>
+          </div>
+        </div>
+
+        <div class="instruction-item" id="inst-expand">
+          <div class="inst-icon expand-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 3 21 3 21 9" />
+              <polyline points="9 21 3 21 3 15" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+          </div>
+          <div class="inst-body">
+            <h3>Open Palm — Starfield Magnetism</h3>
+            <p>Sweep your open hand through space to ripple nearby stars and illuminate constellation filaments around your fingers.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry & Gravity Meter -->
+      <div class="telemetry-section">
+        <div class="telemetry-header">
+          <span>Singularity Pinch Force</span>
+          <span id="pinch-readout" class="mono-val">—</span>
+        </div>
+        <div class="meter-track">
+          <div id="pinch-bar" class="meter-fill"></div>
+          <div id="pinch-threshold-marker" class="meter-marker" title="Gravity Lock Threshold"></div>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="telemetry-box">
+            <span class="telemetry-label">Celestial Roll</span>
+            <span id="roll-val" class="mono-val">0°</span>
+          </div>
+          <div class="telemetry-box">
+            <span class="telemetry-label">Celestial Pitch</span>
+            <span id="pitch-val" class="mono-val">0°</span>
+          </div>
+          <div class="telemetry-box">
+            <span class="telemetry-label">Celestial Yaw</span>
+            <span id="yaw-val" class="mono-val">0°</span>
+          </div>
+          <div class="telemetry-box">
+            <span class="telemetry-label">Core Coordinates</span>
+            <span id="pos-val" class="mono-val">0.0, 0.0, 0.0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass-panel controls-card">
+      <h2 class="panel-heading">Universe Physics &amp; Tuning</h2>
+
+      <!-- Hidden select kept synced with top pills for accessibility -->
+      <select id="shape-select" class="hidden" aria-label="Cosmic Realm">
+        <option value="solar">Solar System</option>
+        <option value="galaxy">Spiral Galaxy</option>
+        <option value="supernova">Pulsar &amp; Tara Web</option>
+        <option value="dyson">Celestial Dyson</option>
+      </select>
+
+      <div class="control-row">
+        <div class="label-with-val">
+          <label for="lerp-slider">Glide Smoothness (Lerp)</label>
+          <span id="lerp-display" class="mono-val">0.14</span>
+        </div>
+        <input type="range" id="lerp-slider" min="0.03" max="0.38" step="0.01" value="0.14" />
+      </div>
+
+      <div class="control-row">
+        <div class="label-with-val">
+          <label for="rot-lerp-slider">Wrist Rotation Smoothness</label>
+          <span id="rot-lerp-display" class="mono-val">0.15</span>
+        </div>
+        <input type="range" id="rot-lerp-slider" min="0.03" max="0.38" step="0.01" value="0.15" />
+      </div>
+
+      <div class="control-row">
+        <div class="label-with-val">
+          <label for="pinch-slider">Pinch Lock Sensitivity</label>
+          <span id="pinch-display" class="mono-val">0.062</span>
+        </div>
+        <input type="range" id="pinch-slider" min="0.030" max="0.110" step="0.004" value="0.062" />
+      </div>
+
+      <div class="control-row">
+        <div class="label-with-val">
+          <label for="star-scale-slider">Tara Star Brilliance</label>
+          <span id="star-scale-display" class="mono-val">1.3x</span>
+        </div>
+        <input type="range" id="star-scale-slider" min="0.6" max="2.4" step="0.1" value="1.3" />
+      </div>
+
+      <div class="button-row">
+        <button id="warp-btn" class="glass-btn accent-btn" type="button">✦ Supernova Pulse</button>
+        <button id="reset-btn" class="glass-btn secondary-btn" type="button">Center Cosmos</button>
+      </div>
+      <div class="button-row single-row">
+        <button id="camera-btn" class="glass-btn primary-btn" type="button">Pause Camera</button>
+        <button id="hud-toggle-btn" class="glass-btn secondary-btn" type="button" title="Toggle Immersive View">Hide Panels (H)</button>
+      </div>
+    </section>
+  </aside>
+
+  <!-- Floating Un-hide HUD Button when in Immersive Mode -->
+  <button id="restore-hud-btn" class="glass-panel restore-hud-btn hidden" type="button">
+    Show Cosmic HUD (H)
+  </button>
+
+  <!-- Bottom-Right HUD: Mirrored Constellation Hand Scanner -->
+  <aside class="hud-webcam" id="hud-webcam">
+    <div class="glass-panel webcam-card">
+      <div class="webcam-header">
+        <div class="webcam-title">
+          <span class="cam-live-dot" id="cam-live-dot"></span>
+          <span>Astral Hand Scanner</span>
+        </div>
+        <span id="handedness-label" class="handedness-pill">Scanning Space…</span>
+      </div>
+
+      <div class="webcam-stage">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="landmark-canvas"></canvas>
+        <div class="scanner-grid-overlay"></div>
+
+        <div id="camera-overlay-msg" class="camera-overlay-msg">
+          <div class="spinner" id="camera-spinner"></div>
+          <p id="camera-msg-text">Initializing MediaPipe HandLandmarker &amp; Starfield…</p>
+          <button id="retry-camera-btn" class="glass-btn primary-btn hidden" type="button">Enable Webcam</button>
+        </div>
+      </div>
+
+      <div class="webcam-legend">
+        <span class="legend-item"><i class="dot thumb-index-dot"></i>Pinch Star (4 &amp; 8)</span>
+        <span class="legend-item"><i class="dot wrist-dot"></i>Wrist Axis (0)</span>
+        <span class="legend-item"><i class="dot skeleton-dot"></i>Constellation</span>
+      </div>
+    </div>
+  </aside>
+
+  <script type="module" src="./app.js?v=crisp3"></script>
+</body>
+</html>
